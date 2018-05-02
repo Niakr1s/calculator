@@ -1,4 +1,5 @@
 const emptySymbol = '␀';
+const TOFIXED = 5;
 
 class AbstractButton {
     constructor({value, innerValue}, attrs={class: 'btn btn-outline-primary'}, props={}) {
@@ -38,7 +39,7 @@ class doButton extends AbstractButton {
                 return e.innerValue;
             }).join(''));
             console.log(`result: ${value}`);
-            if (!Number.isInteger(value)) value = value.toFixed(2);
+            if (!Number.isInteger(value)) value = value.toFixed(TOFIXED);
         } catch (e) {
             value = `Error`;
         }
@@ -62,6 +63,17 @@ class backspaceButton extends AbstractButton {
     setState(state, dispatch) {
         let output = state.output.slice();
         output.pop();
+        dispatch({output});
+    }
+}
+
+class FunctionButton extends AbstractButton {
+    // here innerValue is function
+    setState (state, dispatch) {
+        let output = state.output.slice();
+        let result = this.innerValue(+output[output.length - 1].value);
+        result = !Number.isInteger(result) ? result.toFixed(TOFIXED) : result;
+        output[output.length - 1].value = output[output.length - 1].innerValue = result + "";
         dispatch({output});
     }
 }

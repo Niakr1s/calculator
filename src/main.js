@@ -10,8 +10,8 @@ const config = {
     arithmeticButtons: [
         [new Button({value: ":", innerValue: "/"}), new Button({value: "%"})],
         [new Button({value: "x", innerValue: "*"}), new Button({value: "^", innerValue: "**"})],
-        [new Button({value: "-"})],
-        [new Button({value: "+"})],
+        [new Button({value: "-"}), new FunctionButton({value: "√", innerValue: Math.sqrt})],
+        [new Button({value: "+"}), new FunctionButton({value: "1/x", innerValue: (x) => 1 / x})],
     ],
     commandButtons: [
         [new clearButton({value: "C"}), new backspaceButton({value: "←"})],

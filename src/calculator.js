@@ -42,6 +42,7 @@ class Display {
         this.state = state;
         this.output.setState(state);
         this.history.setState(state);
+        console.log(`NEW STATE IS, `, this.state);
     }
     dispatch(action) {
         let state = updateState(this.state, action);
