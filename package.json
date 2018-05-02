@@ -1,0 +1,19 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Niakr1s/calculator.git"
+  },
+  "author": "Niakr1s",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Niakr1s/calculator/issues"
+  },
+  "homepage": "https://github.com/Niakr1s/calculator#readme"
+}
