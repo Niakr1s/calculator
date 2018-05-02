@@ -9,10 +9,10 @@ class AbstractButton {
         return new AbstractButton(emptySymbol, {class: 'btn btn-outline-primary, disabled: true', disabled: true});
     }
     setState(state, dispatch) {
-        let newOutput = state.output === '0' ? this.value : 
-            state.output.search(/\d$/) !== -1 && this.value.search(/\d$/) !== -1 ? `${state.output}${this.value}` : `${state.output} ${this.value}` ;
+        let newOutput = state.output === '0' ? 
+            this.value : state.output.search(/(\d|\.)$/) !== -1 && this.value.search(/(\d|\.)$/) !== -1 ? 
+                `${state.output}${this.value}` : `${state.output} ${this.value}` ;
         dispatch({output: newOutput});
-        
     }
 }
 
@@ -22,12 +22,13 @@ class doButton extends AbstractButton {
     setState(state, dispatch) {
         let result;
         try {
-            result = `${state.output} = ${eval(state.output)}`;
+            result = eval(state.output);
+            if (!Number.isInteger(result)) result = result.toPrecision(2);
         } catch (e) {
-            result = `${state.output} = Error`;
+            result = `Error`;
         }
         let history = state.history.slice();
-        history.unshift(result);
+        history.unshift(`${state.output} = ${result}`);
         history.pop();
         dispatch({output: '0', history: history});
     }
