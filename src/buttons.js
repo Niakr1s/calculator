@@ -9,8 +9,10 @@ class AbstractButton {
         return new AbstractButton(emptySymbol, {class: 'btn btn-outline-primary, disabled: true', disabled: true});
     }
     setState(state, dispatch) {
-        let newOutput = state.output === '0' ? this.value : state.output + this.value;
+        let newOutput = state.output === '0' ? this.value : 
+            state.output.search(/\d$/) !== -1 && this.value.search(/\d$/) !== -1 ? `${state.output}${this.value}` : `${state.output} ${this.value}` ;
         dispatch({output: newOutput});
+        
     }
 }
 
