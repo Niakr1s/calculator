@@ -3,10 +3,11 @@ class Display {
         this.parent = parent;
         this.state = state;
         this.output = new config.Output();
-        this.history = new config.History(this.state.history, (action) => this.dispatch(action));
+        this.history = new config.History(this.state.history, 
+            (action) => this.dispatch(action));
 
         // creating dom
-        this.dom = elt('div', { class: "" }, {},
+        this.dom = elt('div', {}, {},
             elt('div', { id: 'output'}, {}, this.output.dom),
             elt('div', { id: 'history' }, {}, this.history.dom),
             elt('div', { id: "buttons", class: "d-flex flex-row" }, {},
@@ -20,7 +21,7 @@ class Display {
         this.appendButtons(config.arithmeticButtons, '#arithmeticButtons');
         this.appendButtons(config.commandButtons, '#commandButtons');
 
-        this.setState(state);
+        // this.setState(state);
         this.parent.appendChild(this.dom);
     }
 
@@ -55,13 +56,21 @@ class Output {
             elt('li', {class: "list-group-item list-group-item-success"}, {}, '0'));
     }
     setState(state) {
-        this.dom.querySelector('li').innerText = state.output;
+        if (state.output.length === 0) {
+            this.dom.querySelector('li').innerText = '0';
+            return;
+        } else {
+            this.dom.querySelector('li').innerText = state.output.map(e => {
+                return e.value;
+            }).join(' ');
+        }
     }
 }
 
 class History {
     constructor (history, dispatch) {
         this.dom = elt('ul', {class: "list-group list-group-flush"});
+        this.appendHistory(history);
         this.dispatch = dispatch;
     }
     setState(state) {
@@ -69,16 +78,16 @@ class History {
         this.appendHistory(state.history);
     }
     appendHistory(history) {
-        for (let row of history) {
+        for (let item of history) {
             this.dom.appendChild(elt('li', {
                 class: "list-group-item list-group-item-light"
             }, {
                 onclick: (e) => {
                     this.dispatch({
-                        output: row.slice(0, row.search(/\s=.*/))
+                        output: item.output
                     });
                 }
-            }, row));
+            }, `${item.output.map(e => e.value).join(' ')} = ${item.result}`));
         }
     }
 }

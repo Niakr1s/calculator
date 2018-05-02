@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/Niakr1s/calculator/issues"
   },
-  "homepage": "https://github.com/Niakr1s/calculator#readme"
+  "homepage": "https://github.com/Niakr1s/calculator#readme",
+  "devDependencies": {}
 }

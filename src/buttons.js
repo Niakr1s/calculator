@@ -1,18 +1,30 @@
 const emptySymbol = '␀';
 
 class AbstractButton {
-    constructor(value, attrs={class: 'btn btn-outline-primary'}, props={}) {
+    constructor({value, innerValue}, attrs={class: 'btn btn-outline-primary'}, props={}) {
         this.value = value;
+        this.innerValue = innerValue ? innerValue : value;
         this.dom = elt('button', attrs, props, this.value);
     }
     static empty() {
-        return new AbstractButton(emptySymbol, {class: 'btn btn-outline-primary, disabled: true', disabled: true});
+        return new AbstractButton({value: emptySymbol}, {class: 'btn btn-outline-primary, disabled: true', disabled: true});
     }
     setState(state, dispatch) {
-        let newOutput = state.output === '0' ? 
-            this.value : state.output.search(/(\d|\.)$/) !== -1 && this.value.search(/(\d|\.)$/) !== -1 ? 
-                `${state.output}${this.value}` : `${state.output} ${this.value}` ;
-        dispatch({output: newOutput});
+        let output = state.output.slice();
+        if (output.length === 0) {
+            output = [{value: this.value, innerValue: this.innerValue}];
+        } else {
+            let lastOutput = output[output.length - 1];
+            if (output[output.length - 1].innerValue.search(/(\d|\.)$/) !== -1 && this.innerValue.search(/(\d|\.)/) !== -1) {
+            // if last output ends with . or digit
+            output[output.length - 1] = {value: output[output.length - 1].value + this.value, 
+                innerValue: output[output.length - 1].innerValue + this.innerValue};
+            } else {
+                output.push({value: this.value, innerValue: this.innerValue});
+            }
+        }
+        console.log('output after', output);
+        dispatch({output});
     }
 }
 
@@ -22,28 +34,31 @@ class doButton extends AbstractButton {
     setState(state, dispatch) {
         let result;
         try {
-            result = eval(state.output);
-            if (!Number.isInteger(result)) result = result.toPrecision(2);
+            result = eval(state.output.map(e => {
+                return e.innerValue;
+            }).join(''));
+            console.log(`result: ${result}`);
+            if (!Number.isInteger(result)) result = result.toFixed(2);
         } catch (e) {
             result = `Error`;
         }
         let history = state.history.slice();
-        history.unshift(`${state.output} = ${result}`);
         history.pop();
-        dispatch({output: '0', history: history});
+        history.unshift({output: state.output, result: result});
+        dispatch({output: [], history});
     }
 }
 
 class clearButton extends AbstractButton {
     setState(state, dispatch) {
-        dispatch({output: '0'});
+        dispatch({output: []});
     }
 }
 
 class backspaceButton extends AbstractButton {
     setState(state, dispatch) {
-        let output = state.output.slice(0, state.output.search(/\s*\S$/));
-        if (output.length === 0) output = '0';
+        let output = state.output.slice();
+        output.pop();
         dispatch({output});
     }
 }
