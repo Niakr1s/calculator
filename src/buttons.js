@@ -32,20 +32,23 @@ class Button extends AbstractButton {}
 
 class doButton extends AbstractButton {
     setState(state, dispatch) {
-        let result;
+        let value;
         try {
-            result = eval(state.output.map(e => {
+            value = eval(state.output.map(e => {
                 return e.innerValue;
             }).join(''));
-            console.log(`result: ${result}`);
-            if (!Number.isInteger(result)) result = result.toFixed(2);
+            console.log(`result: ${value}`);
+            if (!Number.isInteger(value)) value = value.toFixed(2);
         } catch (e) {
-            result = `Error`;
+            value = `Error`;
         }
+        value = value + "";
         let history = state.history.slice();
         history.pop();
-        history.unshift({output: state.output, result: result});
-        dispatch({output: [{value: result === 'Error' ? "0" : result + ""}], history});
+        history.unshift({output: state.output, result: value});
+        let output = value === "Error" || value === "0" ? [] : [{value: value, innerValue: value}];
+        console.log(output);
+        dispatch({output, history});
     }
 }
 
