@@ -1,0 +1,16 @@
+table {
+    table-layout: auto;
+    display: block;
+    margin: auto;
+}
+
+td {
+    /* border: 1px solid blue; */
+    width: 30px;
+    height: 30px;
+    text-align: center;
+}
+
+li {
+    text-align: right;
+}

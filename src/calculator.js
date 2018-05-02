@@ -7,35 +7,36 @@ class Display {
             (action) => this.dispatch(action));
 
         // creating dom
-        this.dom = elt('div', {}, {},
-            elt('div', { id: 'output'}, {}, this.output.dom),
-            elt('div', { id: 'history' }, {}, this.history.dom),
-            elt('div', { id: "buttons", class: "d-flex flex-row" }, {},
-                elt('div', { id: 'standardButtons', class: "d-flex flex-column" }),
-                elt('div', { id: 'arithmeticButtons', class: "d-flex flex-column" }),
-                elt('div', { id: 'commandButtons', class: "d-flex flex-column" })
-            )
+        this.dom = elt('div', {}, {}, elt('br', {}),
+            elt('div', { id: 'history' }, {}, this.history.dom), elt('br', {}),
+            elt('div', { id: 'output'}, {}, this.output.dom), elt('br', {}),
+            elt('div', { id: "buttons", class: "d-inline-flex justify-content-start" }, {})
         );
 
-        this.appendButtons(config.standardButtons, '#standardButtons');
-        this.appendButtons(config.arithmeticButtons, '#arithmeticButtons');
-        this.appendButtons(config.commandButtons, '#commandButtons');
+        this.appendButtons(config.buttons, '#buttons');
+
+        // this.dom.querySelector('#buttons').appendChild(elt('div', { id: 'history' }, {}, this.history.dom));
 
         // this.setState(state);
         this.parent.appendChild(this.dom);
     }
 
-    appendButtons (buttons, divClass) {
-        for (let row of buttons) {
-            let rowDom = elt('div', {}, {});
-            for (let item of row) {
-                rowDom.appendChild(item.dom);
-                item.dom.addEventListener('click', (e) => {
-                    item.setState(this.state, (action) => this.dispatch(action));
-                });
+    appendButtons(buttons, divClass) {
+        for (let [type, bigCol] of Object.entries(buttons)) {
+            let col = elt('table', {class: "", id: type});
+            for (let row of bigCol) {
+                let rowDom = elt('tr', {}, {});
+                for (let item of row) {
+                    rowDom.appendChild(elt('td', {}, {}, item.dom));
+                    item.dom.addEventListener('click', (e) => {
+                        item.setState(this.state, (action) => this.dispatch(action));
+                    });
+                }
+                col.appendChild(rowDom);
             }
-            this.dom.querySelector(divClass).appendChild(rowDom);
+            this.dom.querySelector(divClass).appendChild(elt('div', {}, {}, col));
         }
+        
     }
 
     setState(state) {
@@ -53,7 +54,7 @@ class Display {
 // output display
 class Output {
     constructor () {
-        this.dom = elt('ul', {class: "list-group list-group-flush"}, {}, 
+        this.dom = elt('ul', {class: "list-group list-group-flush w-75"}, {}, 
             elt('li', {class: "list-group-item list-group-item-success"}, {}, '0'));
     }
     setState(state) {
@@ -62,7 +63,7 @@ class Output {
             return;
         } else {
             this.dom.querySelector('li').innerText = state.output.map(e => {
-                return e.value;
+                return e.innerValue;
             }).join(' ');
         }
     }
@@ -70,7 +71,7 @@ class Output {
 
 class History {
     constructor (history, dispatch) {
-        this.dom = elt('ul', {class: "list-group list-group-flush"});
+        this.dom = elt('ul', {class: "list-group"});
         this.appendHistory(history);
         this.dispatch = dispatch;
     }
@@ -81,7 +82,7 @@ class History {
     appendHistory(history) {
         for (let item of history) {
             this.dom.appendChild(elt('li', {
-                class: "list-group-item list-group-item-light"
+                class: "list-group-item list-group-item-light w-75"
             }, {
                 onclick: (e) => {
                     this.dispatch({

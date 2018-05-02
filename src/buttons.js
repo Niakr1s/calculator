@@ -1,14 +1,15 @@
 const emptySymbol = '␀';
 const TOFIXED = 5;
+const DEFAULTbutton = 'btn btn-outline-primary';
 
 class AbstractButton {
-    constructor({value, innerValue}, attrs={class: 'btn btn-outline-primary'}, props={}) {
+    constructor({value, innerValue}, attrs={class: DEFAULTbutton}, props={}) {
         this.value = value;
         this.innerValue = innerValue ? innerValue : value;
         this.dom = elt('button', attrs, props, this.value);
     }
     static empty() {
-        return new AbstractButton({value: emptySymbol}, {class: 'btn btn-outline-primary, disabled: true', disabled: true});
+        return new AbstractButton({value: emptySymbol}, {class: DEFAULTbutton, disabled: true});
     }
     setState(state, dispatch) {
         let output = state.output.slice();
@@ -27,9 +28,19 @@ class AbstractButton {
         console.log('output after', output);
         dispatch({output});
     }
+    
 }
 
-class Button extends AbstractButton {}
+class NumberButton extends AbstractButton {}
+
+class Button extends AbstractButton {
+    setState(state, dispatch) {
+        let output = state.output.slice();
+        console.log(output);
+        if (output.length !== 0 && Number.isNaN(+output[output.length - 1].innerValue)) return;
+        else super.setState(state, dispatch);
+    }
+}
 
 class doButton extends AbstractButton {
     setState(state, dispatch) {
@@ -45,8 +56,8 @@ class doButton extends AbstractButton {
         }
         value = value + "";
         let history = state.history.slice();
-        history.pop();
-        history.unshift({output: state.output, result: value});
+        history.shift();
+        history.push({output: state.output, result: value});
         let output = value === "Error" || value === "0" ? [] : [{value: value, innerValue: value}];
         console.log(output);
         dispatch({output, history});
@@ -70,10 +81,22 @@ class backspaceButton extends AbstractButton {
 class FunctionButton extends AbstractButton {
     // here innerValue is function
     setState (state, dispatch) {
+        if (state.output.length === 0) return;
         let output = state.output.slice();
-        let result = this.innerValue(+output[output.length - 1].value);
+        let result = this.innerValue(+output[output.length - 1].innerValue);
+        if (Number.isNaN(+result)) return;
         result = !Number.isInteger(result) ? result.toFixed(TOFIXED) : result;
         output[output.length - 1].value = output[output.length - 1].innerValue = result + "";
         dispatch({output});
+    }
+}
+
+class ConstantButton extends AbstractButton {
+    setState(state, dispatch) {
+        let output = state.output.slice();
+        if (output.length === 0 || Number.isNaN(+output[output.length - 1].innerValue)) {
+            output.push({value: this.value, innerValue: this.innerValue});
+            dispatch({output});
+        }
     }
 }
