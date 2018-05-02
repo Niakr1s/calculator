@@ -20,7 +20,12 @@ class Button extends AbstractButton {}
 
 class doButton extends AbstractButton {
     setState(state, dispatch) {
-        let result = `${state.output} = ${eval(state.output)}`;
+        let result;
+        try {
+            result = `${state.output} = ${eval(state.output)}`;
+        } catch (e) {
+            result = `${state.output} = Error`;
+        }
         let history = state.history.slice();
         history.unshift(result);
         history.pop();
@@ -31,5 +36,13 @@ class doButton extends AbstractButton {
 class clearButton extends AbstractButton {
     setState(state, dispatch) {
         dispatch({output: '0'});
+    }
+}
+
+class backspaceButton extends AbstractButton {
+    setState(state, dispatch) {
+        let output = state.output.slice(0, state.output.search(/\s*\S$/));
+        if (output.length === 0) output = '0';
+        dispatch({output});
     }
 }

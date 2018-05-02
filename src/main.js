@@ -8,11 +8,17 @@ const config = {
         [AbstractButton.empty(), new Button("0"), AbstractButton.empty()],
     ],
     arithmeticButtons: [
-        [new Button("/"), new clearButton('C')],
+        [new Button("/")],
         [new Button("*")],
         [new Button("-")],
-        [new Button("+"), new doButton('=')],
-    ]
+        [new Button("+")],
+    ],
+    commandButtons: [
+        [new clearButton('C'), new backspaceButton('←')],
+        [new Button("(")],
+        [new Button(")")],
+        [new doButton('=')]
+    ],
 };
 
 const defaultState = {

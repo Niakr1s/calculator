@@ -11,12 +11,14 @@ class Display {
             elt('div', { id: 'history' }, {}, this.history.dom),
             elt('div', { id: "buttons", class: "d-flex flex-row" }, {},
                 elt('div', { id: 'standardButtons', class: "d-flex flex-column" }),
-                elt('div', { id: 'arithmeticButtons', class: "d-flex flex-column" })
+                elt('div', { id: 'arithmeticButtons', class: "d-flex flex-column" }),
+                elt('div', { id: 'commandButtons', class: "d-flex flex-column" })
             )
         );
 
         this.appendButtons(config.standardButtons, '#standardButtons');
         this.appendButtons(config.arithmeticButtons, '#arithmeticButtons');
+        this.appendButtons(config.commandButtons, '#commandButtons');
 
         this.setState(state);
         this.parent.appendChild(this.dom);
