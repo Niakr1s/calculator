@@ -45,7 +45,7 @@ class doButton extends AbstractButton {
         let history = state.history.slice();
         history.pop();
         history.unshift({output: state.output, result: result});
-        dispatch({output: [], history});
+        dispatch({output: [{value: result === 'Error' ? "0" : result + ""}], history});
     }
 }
 

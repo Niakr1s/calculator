@@ -26,9 +26,15 @@ const emptyHistory = {
     result: ''
 };
 
+makeHistory = (max) => {
+    let history = new Array(max);
+    history.fill(emptyHistory);
+    return history;
+};
+
 const defaultState = {
     output: [],
-    history: [emptyHistory, emptyHistory, emptyHistory, emptyHistory, emptyHistory]
+    history: makeHistory(5)
 };
 
 let display = new Display(document.querySelector("#calculator"), defaultState, config);
