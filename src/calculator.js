@@ -3,7 +3,7 @@ class Display {
         this.parent = parent;
         this.state = state;
         this.output = new config.Output();
-        this.history = new config.History(this.state.history);
+        this.history = new config.History(this.state.history, (action) => this.dispatch(action));
 
         // creating dom
         this.dom = elt('div', { class: "" }, {},
@@ -60,9 +60,9 @@ class Output {
 }
 
 class History {
-    constructor (history) {
+    constructor (history, dispatch) {
         this.dom = elt('ul', {class: "list-group list-group-flush"});
-        
+        this.dispatch = dispatch;
     }
     setState(state) {
         this.dom.innerText = '';
@@ -70,7 +70,15 @@ class History {
     }
     appendHistory(history) {
         for (let row of history) {
-            this.dom.appendChild(elt('li', {class: "list-group-item list-group-item-light"}, {}, row));
+            this.dom.appendChild(elt('li', {
+                class: "list-group-item list-group-item-light"
+            }, {
+                onclick: (e) => {
+                    this.dispatch({
+                        output: row.slice(0, row.search(/\s=.*/))
+                    });
+                }
+            }, row));
         }
     }
 }
