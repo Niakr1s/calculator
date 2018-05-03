@@ -1,7 +1,10 @@
+#calculator {
+    width: 300px;
+}
+
 /* main display */
 .display {
     /* padding-top: 10px; */
-    width: 300px;
     border: 2px solid grey;
     padding-bottom: 20px;
     padding-left: -20px;
@@ -9,6 +12,10 @@
 
 .display * {
     margin: auto;
+}
+
+#output {
+    text-indent: -3px;
 }
 
 /* output and history */
@@ -21,10 +28,12 @@
     min-height: 24px;
 }
 
-#output, #history p {
+#history, #output p {
     width: 250px;
     border-top-width: 1px;
+    direction: rtl;
     text-align: right;
+    text-indent: 5px;
 }
 
 table {

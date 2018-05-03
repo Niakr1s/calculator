@@ -29,8 +29,8 @@ const config = {
         ],
         commandButtons: [
             [new clearButton({value: "C"}), new backspaceButton({value: "←"})],
-            [new Button({value: "("})],
-            [new Button({value: ")"})],
+            [new HistoryButton({value: '↶', innerValue: '-1'}), new HistoryButton({value: '↷', innerValue: '1'})],
+            [new Button({value: ")"}), new Button({value: "("})],
             [new doButton({value: "="})]
         ],
     }
@@ -38,7 +38,7 @@ const config = {
 
 const emptyHistory = {
     output: [],
-    result: ''
+    result: '',
 };
 
 makeHistory = (max) => {
@@ -49,7 +49,7 @@ makeHistory = (max) => {
 
 const defaultState = {
     output: [],
-    history: makeHistory(5)
+    history: makeHistory(5),
 };
 
 let display = new Display(document.querySelector("#calculator"), defaultState, config);

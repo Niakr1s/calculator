@@ -78,6 +78,13 @@ class backspaceButton extends AbstractButton {
     }
 }
 
+class HistoryButton extends AbstractButton {
+    // here innerValue can be -1 or 1 to step back or forward history
+    setState(state, dispatch) {
+        dispatch(undefined, {statesWalkStep: +this.innerValue});
+    }
+}
+
 class FunctionButton extends AbstractButton {
     // here innerValue is function
     setState (state, dispatch) {
