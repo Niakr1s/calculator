@@ -1,12 +1,12 @@
 const emptySymbol = '␀';
 const TOFIXED = 5;
-const DEFAULTbutton = 'btn btn-outline-primary';
+const DEFAULTbutton = '';
 
 class AbstractButton {
     constructor({value, innerValue}, attrs={class: DEFAULTbutton}, props={}) {
         this.value = value;
         this.innerValue = innerValue ? innerValue : value;
-        this.dom = elt('button', attrs, props, this.value);
+        this.dom = elt('td', attrs, props, this.value);
     }
     static empty() {
         return new AbstractButton({value: emptySymbol}, {class: DEFAULTbutton, disabled: true});
@@ -58,7 +58,7 @@ class doButton extends AbstractButton {
         let history = state.history.slice();
         history.shift();
         history.push({output: state.output, result: value});
-        let output = value === "Error" || value === "0" ? [] : [{value: value, innerValue: value}];
+        let output = Number.isNaN(+value) || +value === Infinity || value === "0" ? [] : [{value: value, innerValue: value}];
         console.log(output);
         dispatch({output, history});
     }

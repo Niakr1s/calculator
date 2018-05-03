@@ -7,13 +7,14 @@ class Display {
             (action) => this.dispatch(action));
 
         // creating dom
-        this.dom = elt('div', {}, {}, elt('br', {}),
-            elt('div', { id: 'history' }, {}, this.history.dom), elt('br', {}),
+        this.dom = elt('div', {class: "display"}, {}, 
+            elt('p', {style: "text-align: center"}, {}, 'Супер простой калькулятор'), elt('br', {}),
+            this.history.dom,
             elt('div', { id: 'output'}, {}, this.output.dom), elt('br', {}),
-            elt('div', { id: "buttons", class: "d-inline-flex justify-content-start" }, {})
+            elt('table', { id: "buttons" }, {})
         );
 
-        this.appendButtons(config.buttons, '#buttons');
+        this.appendButtons(config.buttons, this.dom.querySelector('#buttons'));
 
         // this.dom.querySelector('#buttons').appendChild(elt('div', { id: 'history' }, {}, this.history.dom));
 
@@ -21,22 +22,27 @@ class Display {
         this.parent.appendChild(this.dom);
     }
 
-    appendButtons(buttons, divClass) {
-        for (let [type, bigCol] of Object.entries(buttons)) {
-            let col = elt('table', {class: "", id: type});
-            for (let row of bigCol) {
-                let rowDom = elt('tr', {}, {});
-                for (let item of row) {
-                    rowDom.appendChild(elt('td', {}, {}, item.dom));
-                    item.dom.addEventListener('click', (e) => {
-                        item.setState(this.state, (action) => this.dispatch(action));
-                    });
-                }
-                col.appendChild(rowDom);
+    appendButtons(buttons, dom) {
+        let concatted = [];
+        Object.values(buttons).map((block) => {
+            block.map((row, i) => {
+                if (concatted[i]) concatted[i] = concatted[i].concat(row);
+                else concatted.push(row);
+            });
+        });
+        console.log(concatted);
+        for (let row of concatted) {
+            let tr = elt('tr', {});
+            for (let item of row) {
+                item.dom.addEventListener('click', (e) => {
+                    item.setState(this.state, (action) => this.dispatch(action));
+                });
+                tr.appendChild(item.dom);
             }
-            this.dom.querySelector(divClass).appendChild(elt('div', {}, {}, col));
+            console.log(tr);
+            console.log(dom);
+            dom.appendChild(tr);
         }
-        
     }
 
     setState(state) {
@@ -54,15 +60,14 @@ class Display {
 // output display
 class Output {
     constructor () {
-        this.dom = elt('ul', {class: "list-group list-group-flush w-75"}, {}, 
-            elt('li', {class: "list-group-item list-group-item-success"}, {}, '0'));
+        this.dom = elt('p', {}, {}, '0');
     }
     setState(state) {
         if (state.output.length === 0) {
-            this.dom.querySelector('li').innerText = '0';
+            this.dom.innerText = '0';
             return;
         } else {
-            this.dom.querySelector('li').innerText = state.output.map(e => {
+            this.dom.innerText = state.output.map(e => {
                 return e.innerValue;
             }).join(' ');
         }
@@ -71,7 +76,7 @@ class Output {
 
 class History {
     constructor (history, dispatch) {
-        this.dom = elt('ul', {class: "list-group"});
+        this.dom = elt('div', {id: "history"});
         this.appendHistory(history);
         this.dispatch = dispatch;
     }
@@ -81,15 +86,13 @@ class History {
     }
     appendHistory(history) {
         for (let item of history) {
-            this.dom.appendChild(elt('li', {
-                class: "list-group-item list-group-item-light w-75"
-            }, {
+            this.dom.appendChild(elt('p', {}, {
                 onclick: (e) => {
                     this.dispatch({
                         output: item.output
                     });
                 }
-            }, `${item.output.map(e => e.value).join(' ')} = ${item.result}`));
+            }, item.output.length === 0 ? '' : `${item.output.map(e => e.value).join(' ')} = ${item.result}`));
         }
     }
 }
