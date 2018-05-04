@@ -19,7 +19,7 @@ class Display {
             
             // creating dom
             this.dom = elt('div', {class: "display"}, {}, 
-            elt('p', {style: "text-align: center"}, {}, 'Супер простой калькулятор'), elt('br', {}),
+            elt('br', {}),
             this.history.dom,
             elt('div', { id: 'output'}, {}, this.output.dom), elt('br', {}),
             elt('table', { id: "buttons" }, {})
