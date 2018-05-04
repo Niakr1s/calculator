@@ -14,10 +14,6 @@
     margin: auto;
 }
 
-#output {
-    text-indent: -3px;
-}
-
 /* output and history */
 #output p {
     background: lightgreen;
@@ -28,12 +24,11 @@
     min-height: 24px;
 }
 
-#history, #output p {
+#history>p, #output>p {
     width: 250px;
-    border-top-width: 1px;
-    direction: rtl;
+    /* border-top-width: 1px; */
     text-align: right;
-    text-indent: 5px;
+    padding-right: 5px;
 }
 
 table {
